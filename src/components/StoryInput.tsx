@@ -96,6 +96,11 @@ export default function StoryInput() {
   return (
     <div className="px-4 py-3 border-t border-white/5">
       <div className="max-w-2xl mx-auto">
+        {focusedCharacter && (
+          <div className="mb-2 text-xs text-accent/50 font-sans">
+            Speaking to <span className="text-accent/80">{focusedCharacter.name}</span> — type your dialogue below
+          </div>
+        )}
         <div className="flex gap-2">
           <input
             type="text"
@@ -103,7 +108,11 @@ export default function StoryInput() {
             onChange={(e) => setInput(e.target.value)}
             placeholder={placeholder}
             disabled={isResolving}
-            className="flex-1 bg-transparent border border-white/10 rounded-lg px-4 py-3 text-prose font-serif focus:outline-none focus:border-accent/40 placeholder:text-prose/20 disabled:opacity-30 min-h-[44px]"
+            className={`flex-1 bg-transparent border rounded-lg px-4 py-3 text-prose font-serif focus:outline-none placeholder:text-prose/20 disabled:opacity-30 min-h-[44px] ${
+              focusedCharacter
+                ? 'border-accent/30 focus:border-accent/50'
+                : 'border-white/10 focus:border-accent/40'
+            }`}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
