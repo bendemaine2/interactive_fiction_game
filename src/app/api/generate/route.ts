@@ -27,8 +27,8 @@ async function callClaude(request: LLMRequest, retryCount = 0): Promise<LLMRespo
 
   try {
     const message = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 4096,
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 1500,
       system: systemPrompt,
       messages: [
         {
