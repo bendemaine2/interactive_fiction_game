@@ -21,7 +21,8 @@ RULES:
    - 81-100: Anything goes. Reality fractures.
 7. The world has memory. Characters reference past events naturally.
 8. KEEP IT SHORT. 1-2 paragraphs max for narration. Use \\n\\n between paragraphs.
-9. For dialogue: the character speaks briefly (2-4 sentences), with one small action beat. That's it. Think conversation, not monologue.`;
+9. For dialogue: the character speaks briefly (2-4 sentences), with one small action beat. That's it. Think conversation, not monologue.
+10. The world is ALIVE. Reference characters who aren't in the scene. Mention sounds, events, and tensions happening elsewhere. The player should feel the world extends beyond what they can see.`;
 
 function buildWorldContext(worldState: WorldState): string {
   const chars = worldState.characters
@@ -80,7 +81,11 @@ RESPOND WITH VALID JSON ONLY. No markdown. No explanation. Just JSON:
   ],
   "updated_world_state": {
     "setting": { "description": "Rich description from seed", "era": "Time period", "tone": "Emotional tone", "reality_rules": "What's possible here" },
-    "characters": [{ "id": "char_1", "name": "Name", "personality": "3-5 traits", "backstory": "Brief backstory", "goals": "What they want", "secrets": "What they hide", "emotional_state": "Current mood", "present_in_scene": true }],
+    "characters": [
+      { "id": "char_1", "name": "Name", "personality": "3-5 traits", "backstory": "Brief backstory", "goals": "What they want", "secrets": "What they hide", "emotional_state": "Current mood", "present_in_scene": true },
+      { "id": "char_2", "name": "Name2", "personality": "Different traits", "backstory": "Their story", "goals": "Their goals", "secrets": "Their secrets", "emotional_state": "Their mood", "present_in_scene": true },
+      { "id": "char_3", "name": "Name3", "personality": "Unique traits", "backstory": "Background", "goals": "Aims", "secrets": "Hidden", "emotional_state": "Mood", "present_in_scene": false }
+    ],
     "narrative_history": "Brief summary of opening.",
     "wackiness": <number>,
     "active_branches": [same as action_cards],
@@ -121,7 +126,12 @@ export function buildUserMessage(request: LLMRequest): string {
     case 'genesis':
       return `Create a world from this seed: "${request.player_input}"
 
-Generate a world with at least one named character present. Create a short, atmospheric opening scene (2 paragraphs max).
+IMPORTANT — generate a RICH world:
+- Create 2-3 named characters with DISTINCT personalities, agendas, and relationships to each other
+- At least 2 characters must be present in the opening scene
+- Characters should have tensions, secrets, or history between them
+- The setting should feel lived-in — hint at things that happened before and things brewing
+- Opening scene: 2 short paragraphs max, but make every word count
 
 ${GENESIS_FORMAT}`;
 
@@ -134,7 +144,7 @@ ${GENESIS_FORMAT}`;
         : request.player_input;
       return `The player chooses: "${actionDesc}"
 
-Advance the story. 1-2 short paragraphs. Show consequences, raise stakes. Set scene_state to "SCENE_READY".
+Advance the story. 1-2 short paragraphs. Show consequences, raise stakes. Reference other characters or world events to keep the world feeling alive. Set scene_state to "SCENE_READY".
 
 ${RESPONSE_FORMAT}`;
     }
