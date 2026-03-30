@@ -46,7 +46,7 @@ export default function ActionCards() {
 
   return (
     <div className="px-4 py-3">
-      <div className="max-w-2xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-2">
+      <div className="max-w-2xl mx-auto flex flex-col gap-2">
         {branches.map((branch) => (
           <button
             key={branch.id}
@@ -57,11 +57,13 @@ export default function ActionCards() {
                 ? 'opacity-30 cursor-not-allowed'
                 : isActive
                   ? 'opacity-50 hover:opacity-80'
-                  : 'hover:border-accent/50 hover:bg-accent/5'
+                  : 'hover:border-accent/50 hover:bg-accent/5 cursor-pointer'
             }`}
-            title={branch.description}
           >
-            <span className="text-sm font-sans text-accent">{branch.label}</span>
+            <span className="text-sm font-sans text-accent font-medium">{branch.label}</span>
+            {branch.description && (
+              <p className="text-xs text-prose/40 mt-1 font-sans">{branch.description}</p>
+            )}
           </button>
         ))}
       </div>
