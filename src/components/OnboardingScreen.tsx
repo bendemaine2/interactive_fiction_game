@@ -2,12 +2,15 @@
 
 import { useState } from 'react';
 import { useGame } from '@/hooks/useGame';
-import { generateResponse } from '@/lib/api';
 import type { PlayerType } from '@/lib/types';
 
-export default function OnboardingScreen() {
-  const { state, setPlayerType, setPhase, setWorldState, appendProse, setLoading, setError } =
-    useGame();
+interface OnboardingScreenProps {
+  onGenesis: (seed: string) => void;
+  genesisError: string | null;
+}
+
+export default function OnboardingScreen({ onGenesis, genesisError }: OnboardingScreenProps) {
+  const { state, setPlayerType, setPhase } = useGame();
   const [seed, setSeed] = useState('');
   const [showSubPrompts, setShowSubPrompts] = useState(false);
 
@@ -18,44 +21,17 @@ export default function OnboardingScreen() {
     "What's happening?",
   ];
 
-  async function handleRouteChoice(type: PlayerType) {
+  function handleRouteChoice(type: PlayerType) {
     setPlayerType(type);
     setPhase('ONBOARDING_SEED');
   }
 
-  async function handleSeedSubmit() {
+  function handleSeedSubmit() {
     if (!seed.trim()) {
       setShowSubPrompts(true);
       return;
     }
-
-    setPhase('GENERATING');
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await generateResponse({
-        action: 'genesis',
-        world_state: null,
-        player_input: seed,
-        player_type: state.playerType || 'escapist',
-        wackiness: state.playerType === 'writer' ? 20 : 55,
-        focused_character_id: null,
-      });
-
-      setWorldState(response.updated_world_state);
-      appendProse({
-        id: 'genesis',
-        text: response.prose,
-        type: 'narration',
-      });
-      setPhase('PLAYING');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
-      setPhase('ONBOARDING_SEED');
-    } finally {
-      setLoading(false);
-    }
+    onGenesis(seed);
   }
 
   if (state.phase === 'ONBOARDING_ROUTE') {
@@ -109,6 +85,12 @@ export default function OnboardingScreen() {
         </div>
       )}
 
+      {genesisError && (
+        <div className="mb-4 px-4 py-3 rounded-lg border border-red-400/20 bg-red-400/5 max-w-lg w-full animate-fade-in">
+          <p className="text-red-400/80 text-sm font-sans">{genesisError}</p>
+        </div>
+      )}
+
       <div className="w-full max-w-lg">
         <textarea
           value={seed}
@@ -129,7 +111,7 @@ export default function OnboardingScreen() {
           disabled={state.loading}
           className="mt-4 w-full py-3 rounded-lg bg-accent/20 text-accent font-serif text-lg hover:bg-accent/30 transition-all duration-300 disabled:opacity-50"
         >
-          Enter the dream
+          {state.loading ? 'The dream is forming…' : 'Enter the dream'}
         </button>
       </div>
     </div>
