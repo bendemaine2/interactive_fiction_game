@@ -2,27 +2,28 @@ import type { WorldState, LLMRequest } from './types';
 
 // ============================================================
 // === EDIT YOUR SYSTEM PROMPT HERE ===
-// This is the core prompt that controls all LLM behavior.
-// Modify the text below to change how the world responds.
+// This is the NARRATOR prompt — it handles world, plot, and narration.
+// Character dialogue uses a separate prompt in /api/action/dialogue.
 // ============================================================
 
-const SYSTEM_PROMPT_BASE = `You are the living voice of a dream world — narrator, characters, and story architect.
+const SYSTEM_PROMPT_BASE = `You are the narrator and story architect of a dream world. You control the world, the atmosphere, and the plot. You do NOT voice individual characters in dialogue — that is handled separately.
 
 RULES:
-1. Write in second person. Show, don't tell. Be vivid but BRIEF.
-2. Voice characters as themselves — distinct, with their own speech patterns and agendas.
-3. Always return exactly 3 action cards. Short labels (~5 words each).
+1. Write in second person. Show, don't tell. Be vivid.
+2. Use longer, layered sentences. Focus on landscape, atmosphere, tension, and what's happening in the wider world. This is the narrator's register — wide lens, literary, evocative.
+3. Always return exactly 3 action cards. Short labels (~5 words each). Each must have both a label AND a description.
 4. Never break the fiction. Never reference the system or AI.
-5. If the player attempts a structural world change in Story Mode (killing a character, rewriting lore, changing the setting): respond warmly in-world. Show the world gently resisting. Guide toward World-Building Mode without system language.
-6. Wackiness governs tone:
-   - 0-20: Grounded, realistic. Clear cause and effect.
-   - 21-50: Heightened. Coincidences, lyrical prose.
-   - 51-80: Surreal. Dream-logic. Metaphors become literal.
-   - 81-100: Anything goes. Reality fractures.
+5. If the player attempts a structural world change in Story Mode (killing a character, rewriting lore): respond warmly in-world. Show the world gently resisting. Guide toward World-Building Mode without system language.
+6. Wackiness governs EVERYTHING about your tone and content:
+   - 0-20: GROUNDED. Realistic, measured prose. Nothing surprising happens. Characters behave predictably. Cause and effect is clear. Think literary fiction.
+   - 21-40: HEIGHTENED. Slightly more poetic. Coincidences occur. Atmosphere thickens. Think magical realism lite.
+   - 41-60: DREAMLIKE. Creative latitude. Unexpected turns. Metaphors bleed into reality. Characters surprise you. Think Murakami.
+   - 61-80: SURREAL. Reality bends visibly. Objects transform. Time stutters. Dream-logic governs. Think Borges.
+   - 81-100: UNBOUND. Full surrealism. Nonsensical juxtapositions. Reality fractures. Anything is possible. Think Dali painted with words.
+   THIS IS NOT OPTIONAL. The wackiness value MUST shape your prose style, imagery, and plot decisions.
 7. The world has memory. Characters reference past events naturally.
-8. KEEP IT SHORT. 1-2 paragraphs max for narration. Use \\n\\n between paragraphs.
-9. For dialogue: the character speaks briefly (2-4 sentences), with one small action beat. That's it. Think conversation, not monologue.
-10. The world is ALIVE. Reference characters who aren't in the scene. Mention sounds, events, and tensions happening elsewhere. The player should feel the world extends beyond what they can see.`;
+8. KEEP IT SHORT. 1-2 paragraphs max. Use \\n\\n between paragraphs.
+9. The world is ALIVE. Reference characters who aren't in the scene. Mention sounds, events, and tensions happening elsewhere.`;
 
 function buildWorldContext(worldState: WorldState): string {
   const chars = worldState.characters
@@ -47,37 +48,38 @@ WACKINESS: ${worldState.wackiness}/100 | PLAYER: ${worldState.player_type}`;
 
 // ============================================================
 // === RESPONSE FORMAT TEMPLATES ===
-// These tell the LLM how to structure its JSON response.
 // ============================================================
 
 const RESPONSE_FORMAT = `
 RESPOND WITH VALID JSON ONLY. No markdown. No explanation. Just JSON:
 {
-  "prose": "1-2 short paragraphs. Use \\n\\n between paragraphs.",
+  "prose": "1-2 short paragraphs of narrator prose. Use \\n\\n between paragraphs.",
   "action_cards": [
-    { "id": "1", "label": "~5 words", "description": "One sentence" },
-    { "id": "2", "label": "~5 words", "description": "One sentence" },
-    { "id": "3", "label": "~5 words", "description": "One sentence" }
+    { "id": "1", "label": "A short ~5 word label", "description": "One clear sentence describing what happens if chosen" },
+    { "id": "2", "label": "A short ~5 word label", "description": "One clear sentence describing what happens if chosen" },
+    { "id": "3", "label": "A short ~5 word label", "description": "One clear sentence describing what happens if chosen" }
   ],
   "updated_world_state": {
     "setting": { "description": "...", "era": "...", "tone": "...", "reality_rules": "..." },
     "characters": [{ "id": "...", "name": "...", "personality": "...", "backstory": "...", "goals": "...", "secrets": "...", "emotional_state": "...", "present_in_scene": true }],
     "narrative_history": "Updated summary including what just happened...",
     "wackiness": <number>,
-    "active_branches": [same as action_cards],
+    "active_branches": [same 3 objects as action_cards above],
     "scene_state": "SCENE_READY",
     "player_type": "<writer|escapist>"
   }
-}`;
+}
+
+CRITICAL: action_cards must have EXACTLY 3 items. Each MUST have a non-empty "label" and "description". Never return empty or missing cards.`;
 
 const GENESIS_FORMAT = `
 RESPOND WITH VALID JSON ONLY. No markdown. No explanation. Just JSON:
 {
-  "prose": "Opening scene. 2 short paragraphs max. Set the mood, show who's here, end with possibility. Use \\n\\n between paragraphs.",
+  "prose": "Opening scene. 2 short paragraphs. Set the mood, introduce who is here, hint at tension. Use \\n\\n between paragraphs.",
   "action_cards": [
-    { "id": "1", "label": "~5 words", "description": "One sentence" },
-    { "id": "2", "label": "~5 words", "description": "One sentence" },
-    { "id": "3", "label": "~5 words", "description": "One sentence" }
+    { "id": "1", "label": "A short ~5 word label", "description": "One clear sentence describing what happens" },
+    { "id": "2", "label": "A short ~5 word label", "description": "One clear sentence describing what happens" },
+    { "id": "3", "label": "A short ~5 word label", "description": "One clear sentence describing what happens" }
   ],
   "updated_world_state": {
     "setting": { "description": "Rich description from seed", "era": "Time period", "tone": "Emotional tone", "reality_rules": "What's possible here" },
@@ -88,11 +90,13 @@ RESPOND WITH VALID JSON ONLY. No markdown. No explanation. Just JSON:
     ],
     "narrative_history": "Brief summary of opening.",
     "wackiness": <number>,
-    "active_branches": [same as action_cards],
+    "active_branches": [same 3 objects as action_cards above],
     "scene_state": "SCENE_READY",
     "player_type": "<writer|escapist>"
   }
-}`;
+}
+
+CRITICAL: action_cards must have EXACTLY 3 items. Each MUST have a non-empty "label" and "description". Never return empty or missing cards.`;
 
 // ============================================================
 // === PROMPT BUILDERS ===
@@ -149,22 +153,10 @@ Advance the story. 1-2 short paragraphs. Show consequences, raise stakes. Refere
 ${RESPONSE_FORMAT}`;
     }
 
-    case 'dialogue': {
-      const character = request.world_state?.characters.find(
-        (c) => c.id === request.focused_character_id
-      );
-      const charName = character?.name || 'the character';
-      return `The player says to ${charName}: "${request.player_input}"
-
-${charName} responds IN CHARACTER. Keep it conversational:
-- The character speaks 2-4 sentences max
-- Add one brief action beat (a gesture, expression, or movement)
-- Stay in their voice and personality
-- Do NOT write a long scene description
-- Keep scene_state as "SCENE_ACTIVE"
-
-${RESPONSE_FORMAT}`;
-    }
+    case 'dialogue':
+      // This case is kept for backwards compatibility but CH-03 routes
+      // dialogue through /api/action/dialogue instead.
+      return request.player_input;
 
     case 'do_this_for_me':
       return `Pick the most dramatically interesting branch and execute it. 1-2 paragraphs max.
