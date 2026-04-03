@@ -37,8 +37,8 @@ export default function StoryInput() {
         action: 'story_action',
         world_state: state.worldState,
         player_input: currentInput,
-        player_type: state.worldState.player_type,
-        wackiness: state.worldState.wackiness,
+        player_type: state.worldState.player_type || 'escapist',
+        wackiness: state.worldState.wackiness ?? 50,
         focused_character_id: null,
       });
 
@@ -70,8 +70,8 @@ export default function StoryInput() {
         action: 'do_this_for_me',
         world_state: state.worldState,
         player_input: '',
-        player_type: state.worldState.player_type,
-        wackiness: state.worldState.wackiness,
+        player_type: state.worldState.player_type || 'escapist',
+        wackiness: state.worldState.wackiness ?? 50,
         focused_character_id: null,
       });
 

@@ -39,8 +39,8 @@ export default function ActionCards() {
         action: 'story_action',
         world_state: state.worldState,
         player_input: branchId,
-        player_type: state.worldState.player_type,
-        wackiness: state.worldState.wackiness,
+        player_type: state.worldState.player_type || 'escapist',
+        wackiness: state.worldState.wackiness ?? 50,
         focused_character_id: null,
       });
 

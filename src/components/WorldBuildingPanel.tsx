@@ -34,8 +34,8 @@ export default function WorldBuildingPanel() {
         action: 'add_character',
         world_state: worldState,
         player_input: newCharDesc,
-        player_type: worldState.player_type,
-        wackiness: worldState.wackiness,
+        player_type: worldState.player_type || 'escapist',
+        wackiness: worldState.wackiness ?? 50,
         focused_character_id: null,
       });
 

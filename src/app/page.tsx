@@ -30,7 +30,12 @@ function GameRouter() {
         seed,
       });
 
-      setWorldState(response.updated_world_state);
+      const playerType = state.playerType || 'escapist';
+      setWorldState({
+        ...response.updated_world_state,
+        player_type: response.updated_world_state.player_type || playerType,
+        wackiness: response.updated_world_state.wackiness ?? wackiness,
+      });
       appendProse({
         id: 'genesis',
         text: response.prose,
