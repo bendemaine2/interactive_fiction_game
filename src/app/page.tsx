@@ -7,12 +7,13 @@ import { generateResponse } from '@/lib/api';
 import OnboardingScreen from '@/components/OnboardingScreen';
 import StoryScreen from '@/components/StoryScreen';
 import LoadingState from '@/components/LoadingState';
+import type { SeedAnswers } from '@/lib/types';
 
 function GameRouter() {
   const { state, setPhase, setWorldState, appendProse, setLoading, setError } = useGame();
   const [genesisError, setGenesisError] = useState<string | null>(null);
 
-  const handleGenesis = useCallback(async (seed: string) => {
+  const handleGenesis = useCallback(async (seedText: string, seed: SeedAnswers, wackiness: number) => {
     setPhase('GENERATING');
     setLoading(true);
     setError(null);
@@ -22,10 +23,11 @@ function GameRouter() {
       const response = await generateResponse({
         action: 'genesis',
         world_state: null,
-        player_input: seed,
+        player_input: seedText,
         player_type: state.playerType || 'escapist',
-        wackiness: state.playerType === 'writer' ? 20 : 55,
+        wackiness,
         focused_character_id: null,
+        seed,
       });
 
       setWorldState(response.updated_world_state);
@@ -39,15 +41,16 @@ function GameRouter() {
       const message = err instanceof Error ? err.message : 'Something went wrong';
       setError(message);
       setGenesisError(message);
-      setPhase('ONBOARDING_SEED');
+      setPhase('ONBOARDING_SUMMARY');
     } finally {
       setLoading(false);
     }
   }, [state.playerType, setPhase, setWorldState, appendProse, setLoading, setError]);
 
   switch (state.phase) {
-    case 'ONBOARDING_ROUTE':
+    case 'ONBOARDING_INTRO':
     case 'ONBOARDING_SEED':
+    case 'ONBOARDING_SUMMARY':
       return <OnboardingScreen onGenesis={handleGenesis} genesisError={genesisError} />;
     case 'GENERATING':
       return <LoadingState message="Building your world…" />;

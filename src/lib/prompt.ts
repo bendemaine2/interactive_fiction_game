@@ -127,8 +127,24 @@ export function buildSystemPrompt(request: LLMRequest): string {
 
 export function buildUserMessage(request: LLMRequest): string {
   switch (request.action) {
-    case 'genesis':
-      return `Create a world from this seed: "${request.player_input}"
+    case 'genesis': {
+      const seedBlock = request.seed
+        ? `PLAYER SEED ANSWERS:
+- Who they are: ${request.seed.identity}
+- Where they are: ${request.seed.place}
+- Who is with them: ${request.seed.characters}
+- What they want or fear: ${request.seed.desire}`
+        : `Player seed: "${request.player_input}"`;
+
+      const playerModifier = request.player_type === 'writer'
+        ? 'The player chose "I have a world in mind." Follow their lead closely. Extrapolate minimally. Respect their vision. The seed answers are precise — honour them.'
+        : 'The player chose "Take me somewhere new." Be generative. Surprise them. Extrapolate richly from the seed. Create unexpected details, expand the world beyond what was given.';
+
+      return `You have been given four seed answers from the player: who they are, where they are, who is with them, and what they want or fear. Use these as the fixed anchors of the world. Do not contradict them. Do not override them. Build outward from them.
+
+${seedBlock}
+
+${playerModifier}
 
 IMPORTANT — generate a RICH world:
 - Create 2-3 named characters with DISTINCT personalities, agendas, and relationships to each other
@@ -138,6 +154,7 @@ IMPORTANT — generate a RICH world:
 - Opening scene: 2 short paragraphs max, but make every word count
 
 ${GENESIS_FORMAT}`;
+    }
 
     case 'story_action': {
       const branch = request.world_state?.active_branches.find(

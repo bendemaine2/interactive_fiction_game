@@ -1,6 +1,19 @@
 export type PlayerType = 'writer' | 'escapist';
 export type SceneState = 'SCENE_ACTIVE' | 'SCENE_READY' | 'SCENE_RESOLVING';
-export type GamePhase = 'ONBOARDING_ROUTE' | 'ONBOARDING_SEED' | 'GENERATING' | 'PLAYING' | 'WORLD_BUILDING';
+export type GamePhase =
+  | 'ONBOARDING_INTRO'
+  | 'ONBOARDING_SEED'
+  | 'ONBOARDING_SUMMARY'
+  | 'GENERATING'
+  | 'PLAYING'
+  | 'WORLD_BUILDING';
+
+export interface SeedAnswers {
+  identity: string;
+  place: string;
+  characters: string;
+  desire: string;
+}
 
 export interface Character {
   id: string;
@@ -47,6 +60,7 @@ export interface LLMRequest {
   player_type: PlayerType;
   wackiness: number;
   focused_character_id: string | null;
+  seed?: SeedAnswers;
 }
 
 export interface LLMResponse {
@@ -64,4 +78,7 @@ export interface GameState {
   focusedCharacterId: string | null;
   loading: boolean;
   error: string | null;
+  wackiness: number;
+  seedAnswers: SeedAnswers;
+  seedDecided: Record<string, boolean>;
 }
