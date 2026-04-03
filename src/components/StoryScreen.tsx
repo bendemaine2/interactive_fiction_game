@@ -63,7 +63,7 @@ export default function StoryScreen() {
 
         {/* ── FIXED BOTTOM BAR ── */}
         <div
-          className="fixed bottom-0 left-0 right-0 z-20 bg-background/95 backdrop-blur-sm border-t border-white/5 transition-opacity duration-500"
+          className="fixed bottom-0 left-0 right-0 z-20 bg-background/95 backdrop-blur-sm border-t border-white/5 transition-opacity duration-500 max-h-[50vh] overflow-y-auto"
           style={{ opacity: inDialogue ? 0.1 : 1 }}
         >
           {/* Loading indicator */}

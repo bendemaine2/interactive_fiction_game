@@ -55,9 +55,9 @@ RESPOND WITH VALID JSON ONLY. No markdown. No explanation. Just JSON:
 {
   "prose": "1-2 short paragraphs of narrator prose. Use \\n\\n between paragraphs.",
   "action_cards": [
-    { "id": "1", "label": "A short ~5 word label", "description": "One clear sentence describing what happens if chosen" },
-    { "id": "2", "label": "A short ~5 word label", "description": "One clear sentence describing what happens if chosen" },
-    { "id": "3", "label": "A short ~5 word label", "description": "One clear sentence describing what happens if chosen" }
+    { "id": "1", "label": "A short ~5 word label", "description": "Brief half-sentence, max 10 words" },
+    { "id": "2", "label": "A short ~5 word label", "description": "Brief half-sentence, max 10 words" },
+    { "id": "3", "label": "A short ~5 word label", "description": "Brief half-sentence, max 10 words" }
   ],
   "updated_world_state": {
     "setting": { "description": "...", "era": "...", "tone": "...", "reality_rules": "..." },
@@ -77,9 +77,9 @@ RESPOND WITH VALID JSON ONLY. No markdown. No explanation. Just JSON:
 {
   "prose": "Opening scene. 2 short paragraphs. Set the mood, introduce who is here, hint at tension. Use \\n\\n between paragraphs.",
   "action_cards": [
-    { "id": "1", "label": "A short ~5 word label", "description": "One clear sentence describing what happens" },
-    { "id": "2", "label": "A short ~5 word label", "description": "One clear sentence describing what happens" },
-    { "id": "3", "label": "A short ~5 word label", "description": "One clear sentence describing what happens" }
+    { "id": "1", "label": "A short ~5 word label", "description": "Brief half-sentence, max 10 words" },
+    { "id": "2", "label": "A short ~5 word label", "description": "Brief half-sentence, max 10 words" },
+    { "id": "3", "label": "A short ~5 word label", "description": "Brief half-sentence, max 10 words" }
   ],
   "updated_world_state": {
     "setting": { "description": "Rich description from seed", "era": "Time period", "tone": "Emotional tone", "reality_rules": "What's possible here" },
