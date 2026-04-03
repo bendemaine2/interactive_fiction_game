@@ -18,10 +18,10 @@ export default function StoryScreen() {
 
   return (
     <>
-      <div className="flex flex-col h-screen relative overflow-hidden">
-        {/* ── FIXED TOP BAR ── */}
+      <div className="flex flex-col h-screen relative">
+        {/* ── TOP BAR ── */}
         <div
-          className="fixed top-0 left-0 right-0 z-30 bg-background/95 backdrop-blur-sm border-b border-white/5 transition-opacity duration-500"
+          className="flex-shrink-0 z-30 bg-background/95 backdrop-blur-sm border-b border-white/5 transition-opacity duration-500"
           style={{ opacity: inDialogue ? 0.2 : 1 }}
         >
           <div className="flex items-center justify-between px-4 py-2 max-w-3xl mx-auto">
@@ -52,7 +52,7 @@ export default function StoryScreen() {
 
         {/* ── SCROLLABLE NARRATIVE ── */}
         <div
-          className="flex-1 overflow-y-auto pt-[52px] pb-[280px] transition-all duration-600"
+          className="flex-1 min-h-0 overflow-y-auto transition-all duration-600"
           style={{
             opacity: inDialogue ? 0.18 : 1,
             filter: inDialogue ? 'blur(0.5px)' : 'none',
@@ -61,9 +61,9 @@ export default function StoryScreen() {
           <NarrativeProse entries={state.proseHistory} />
         </div>
 
-        {/* ── FIXED BOTTOM BAR ── */}
+        {/* ── BOTTOM BAR ── */}
         <div
-          className="fixed bottom-0 left-0 right-0 z-20 bg-background/95 backdrop-blur-sm border-t border-white/5 transition-opacity duration-500 max-h-[50vh] overflow-y-auto"
+          className="flex-shrink-0 z-20 bg-background/95 backdrop-blur-sm border-t border-white/5 transition-opacity duration-500 max-h-[45vh] overflow-y-auto"
           style={{ opacity: inDialogue ? 0.1 : 1 }}
         >
           {/* Loading indicator */}
