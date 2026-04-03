@@ -107,6 +107,12 @@ export async function POST(req: Request) {
     }
 
     const response = await callClaude(body);
+
+    // Always sync active_branches from action_cards so cards never go stale
+    if (response.action_cards && response.updated_world_state) {
+      response.updated_world_state.active_branches = response.action_cards;
+    }
+
     return NextResponse.json(response);
   } catch (error) {
     console.error('Generate API error:', error);

@@ -70,7 +70,7 @@ RESPOND WITH VALID JSON ONLY. No markdown. No explanation. Just JSON:
   }
 }
 
-CRITICAL: action_cards must have EXACTLY 3 items. Each MUST have a non-empty "label" and "description". Never return empty or missing cards.`;
+CRITICAL: action_cards must have EXACTLY 3 items. Each MUST have a non-empty "label" and "description". Never return empty or missing cards. ALWAYS generate FRESH, NEW action cards that reflect the current situation — NEVER repeat or recycle previous options.`;
 
 const GENESIS_FORMAT = `
 RESPOND WITH VALID JSON ONLY. No markdown. No explanation. Just JSON:
@@ -96,7 +96,7 @@ RESPOND WITH VALID JSON ONLY. No markdown. No explanation. Just JSON:
   }
 }
 
-CRITICAL: action_cards must have EXACTLY 3 items. Each MUST have a non-empty "label" and "description". Never return empty or missing cards.`;
+CRITICAL: action_cards must have EXACTLY 3 items. Each MUST have a non-empty "label" and "description". Never return empty or missing cards. ALWAYS generate FRESH, NEW action cards that reflect the current situation — NEVER repeat or recycle previous options.`;
 
 // ============================================================
 // === PROMPT BUILDERS ===
